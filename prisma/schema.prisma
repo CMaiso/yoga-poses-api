@@ -9,3 +9,44 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Pose {
+  id          String              @id @default(uuid())
+  name        String              @unique
+  level       String
+  description String
+  style       StyleonPoses[]
+  categories  CategoriesOnPoses[]
+}
+
+model Category {
+  id          String              @id @default(uuid())
+  name        String              @unique
+  description String
+  poses       CategoriesOnPoses[]
+}
+
+model CategoriesOnPoses {
+  pose       Pose     @relation(fields: [poseId], references: [id])
+  poseId     String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([poseId, categoryId])
+}
+
+model Style {
+  id    String         @id @default(uuid())
+  name  String
+  level String
+  poses StyleonPoses[]
+}
+
+model StyleonPoses {
+  style   Style  @relation(fields: [styleId], references: [id])
+  styleId String
+  pose    Pose   @relation(fields: [poseId], references: [id])
+  poseId  String
+
+  @@id([styleId, poseId])
+}
