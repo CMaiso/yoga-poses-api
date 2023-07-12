@@ -8,7 +8,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
         res.json({data: categories});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving poses' });
+        res.status(500).json({ error: 'An error occurred while retrieving categories' });
     }
 }
 
@@ -22,20 +22,6 @@ export const getCategoryByName = async (req: Request, res: Response) => {
         res.json({data: category});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving pose' });
-    }
-}
-
-export const getCategoriesByLevel = async (req: Request, res: Response) => {
-    const level = req.params.level;
-    try {
-        const categories = await prisma.category.findMany({
-            where: { level }
-        });
-
-        res.json({data: categories});
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving poses' });
+        res.status(500).json({ error: 'An error occurred while retrieving category by name' });
     }
 }

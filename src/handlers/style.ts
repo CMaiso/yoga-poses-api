@@ -8,34 +8,34 @@ export const getAllStyles = async (req: Request, res: Response) => {
         res.json({data: styles});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving poses' });
+        res.status(500).json({ error: 'An error occurred while retrieving styles' });
     }
 }
 
 export const getStyleByName = async (req: Request, res: Response) => {
     const name = req.params.name;
     try {
-        const style = await prisma.category.findFirst({
+        const style = await prisma.style.findFirst({
             where: { name }
         });
 
         res.json({data: style});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving pose' });
+        res.status(500).json({ error: 'An error occurred while retrieving style by name' });
     }
 }
 
 export const getStylesByLevel = async (req: Request, res: Response) => {
     const level = req.params.level;
     try {
-        const styles = await prisma.category.findMany({
-            where: { level }
+        const styles = await prisma.style.findMany({
+            where: { level: level }
         });
 
         res.json({data: styles});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving poses' });
+        res.status(500).json({ error: 'An error occurred while retrieving styles by level' });
     }
 }

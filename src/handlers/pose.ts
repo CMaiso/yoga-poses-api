@@ -36,6 +36,6 @@ export const getPosesByLevel = async (req: Request, res: Response) => {
         res.json({data: poses});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving poses' });
+        res.status(500).json({ error: 'An error occurred while retrieving poses by level' });
     }
 }
