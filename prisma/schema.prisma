@@ -11,12 +11,13 @@ datasource db {
 }
 
 model Pose {
-  id          String              @id @default(uuid())
-  name        String              @unique
-  level       String
-  description String
-  style       StyleonPoses[]
-  categories  CategoriesOnPoses[]
+  id            String              @id @default(uuid())
+  name          String              @unique
+  sanskrit_name String
+  level         String
+  description   String
+  style         StyleonPoses[]
+  categories    CategoriesOnPoses[]
 }
 
 model Category {
