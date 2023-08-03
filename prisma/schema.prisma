@@ -11,39 +11,30 @@ datasource db {
 }
 
 model Pose {
-  id            String              @id @default(uuid())
-  name          String              @unique
+  id            String          @id @default(uuid())
+  english_name  String          @unique
   sanskrit_name String
   level         String
   description   String
-  style         StyleonPoses[]
-  categories    CategoriesOnPoses[]
+  styles        StylesOnPoses[]
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id])
 }
 
 model Category {
-  id          String              @id @default(uuid())
-  name        String              @unique
+  id          String @id @default(uuid())
+  name        String @unique
   description String
-  poses       CategoriesOnPoses[]
-}
-
-model CategoriesOnPoses {
-  pose       Pose     @relation(fields: [poseId], references: [id])
-  poseId     String
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-
-  @@id([poseId, categoryId])
+  poses       Pose[]
 }
 
 model Style {
-  id    String         @id @default(uuid())
+  id    String          @id @default(uuid())
   name  String
-  level String
-  poses StyleonPoses[]
+  poses StylesOnPoses[]
 }
 
-model StyleonPoses {
+model StylesOnPoses {
   style   Style  @relation(fields: [styleId], references: [id])
   styleId String
   pose    Pose   @relation(fields: [poseId], references: [id])
