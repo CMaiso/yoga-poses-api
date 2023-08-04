@@ -10,77 +10,39 @@ export const getPoses = async (req: Request, res: Response) => {
     const styleStr = Array.isArray(style) ? style[0] : style;
 
     try {
-        let poses;
+        let whereConditions = {};
 
-        if (name) {
-            poses = await prisma.pose.findFirst({
-                where: {english_name: nameStr},
-                include: {
-                    category: true,
-                    styles: {
-                        include: {
-                            style: true
+        if (nameStr) {
+            whereConditions = {...whereConditions, english_name: nameStr};
+        } if (levelStr) {
+            whereConditions = {...whereConditions, level: levelStr};
+        } if (categoryStr) {
+            whereConditions = {...whereConditions, category: {name: categoryStr}};
+        } if (styleStr) {
+            whereConditions = {
+                ...whereConditions,
+                styles: {
+                    some: {
+                        style: {
+                            name: styleStr
                         }
                     }
                 }
-            });
-        } else if (level) {
-            poses = await prisma.pose.findMany({
-                where: {level: levelStr},
-                include: {
-                    category: true,
-                    styles: {
-                        include: {
-                            style: true
-                        }
-                    }
-                }
-            });
-        } else if (category) {
-            poses = await prisma.pose.findMany({
-                where: {category: {name: categoryStr}},
-                include: {
-                    category: true,
-                    styles: {
-                        include: {
-                            style: true
-                        }
-                    }
-                }
-            });
-        } else if (style) {
-            poses = await prisma.pose.findMany({
-                where: {
-                    styles: {
-                        some: {
-                            style: {
-                                name: styleStr
-                            }
-                        }
-                    }
-                },
-                include: {
-                    styles: {
-                        include: {
-                            style: true
-                        }
-                    },
-                    category: true
-                }
-            });
-        } else {
-            poses = await prisma.pose.findMany({
-                include: {
-                    category: true,
-                    styles: {
-                        include: {
-                            style: true
-                        }
-                    }
-                }
-            });
-
+            };
         }
+
+        console.log(whereConditions);
+        const poses = await prisma.pose.findMany({
+            where: whereConditions,
+            include: {
+                category: true,
+                styles: {
+                    include: {
+                        style: true
+                    }
+                }
+            }
+        });
         res.status(200).json({data: poses});
     } catch (error) {
         console.error(error);

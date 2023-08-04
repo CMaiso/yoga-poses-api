@@ -10,10 +10,17 @@ export const getCategories = async (req: Request, res: Response) => {
     try {
         if (name) {
             categories = await prisma.category.findFirst({
-                where: { name: nameStr }
+                where: { name: nameStr },
+                include: {
+                    poses: true,
+                }
             });
         } else {
-            categories = await prisma.category.findMany();
+            categories = await prisma.category.findMany({
+                include: {
+                    poses: true,
+                }
+            });
         }
 
         res.json({data: categories});
