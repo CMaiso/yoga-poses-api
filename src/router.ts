@@ -1,28 +1,23 @@
 import { Router } from 'express'
-import {getAllPoses, getOnePose, getPosesByLevel} from './handlers/pose';
-import {getAllCategories, getCategoryByName} from "./handlers/category";
-import {getAllStyles, getStyleByName, getStylesByLevel} from "./handlers/style";
+import {getPoses} from './handlers/pose';
+import {getCategories} from "./handlers/category";
+import {getStyles} from "./handlers/style";
 
 const router = Router()
 
 /**
  * Pose
  */
-router.get('/pose', getAllPoses)
-router.get('/pose/:name', getOnePose)
-router.get('/pose/:level', getPosesByLevel)
+router.get('/pose', getPoses)
 
 /**
  * Category
  */
-router.get('/category', getAllCategories)
-router.get('/category/:name', getCategoryByName)
+router.get('/category', getCategories)
 
 /**
  * Style
  */
-router.get('/style', getAllStyles)
-router.get('/style/:name', getStyleByName)
-router.get('/style/:level', getStylesByLevel)
+router.get('/style', getStyles)
 
 export default router
