@@ -1,9 +1,8 @@
-import {PrismaClient} from '@prisma/client'
 import {categories} from '../data/category';
 import {styles} from '../data/styles';
 import {poses} from '../data/poses';
 
-const prisma = new PrismaClient();
+import prisma from '../src/db';
 
 const main = async () => {
 
