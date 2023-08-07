@@ -1,15 +1,19 @@
 import {Request, Response} from 'express';
 import prisma from '../db';
 
+import {getStringValue} from "../../utils/string";
+import {mapStyle} from "../../utils/style";
+import {StyleFromDatabase, Style} from "../../types/Style";
+
 export const getStyles = async (req: Request, res: Response) => {
     const {name} = req.query;
-    const nameStr = Array.isArray(name) ? name[0] : name;
-
-    let rawData;
+    const nameStr = getStringValue(name);
 
     try {
+        let styleResponse: Style[];
+        
         if (name) {
-            rawData = await prisma.style.findFirst({
+            const styleData: StyleFromDatabase | null = await prisma.style.findFirst({
                 where: {name: nameStr},
                 include: {
                     poses: {
@@ -23,21 +27,13 @@ export const getStyles = async (req: Request, res: Response) => {
                     }
                 }
             });
-            const style = {
-                id: rawData?.id,
-                name: rawData?.name,
-                poses: rawData?.poses.map((pose: any) => ({
-                    id: pose.pose.id,
-                    english_name: pose.pose.english_name,
-                    sanskrit_name: pose.pose.sanskrit_name,
-                    level: pose.pose.level,
-                    description: pose.pose.description,
-                    category: pose.pose.category
-                }))
-            };
-            res.json({style});
+            if (styleData) {
+                styleResponse = [mapStyle(styleData)];
+            } else {
+                styleResponse = []
+            }
         } else {
-            rawData = await prisma.style.findMany({
+            const styleData = await prisma.style.findMany({
                 include: {
                     poses: {
                         include: {
@@ -51,21 +47,10 @@ export const getStyles = async (req: Request, res: Response) => {
                 }
             });
 
-            const styles = rawData.map((style: any) => ({
-                id: style.id,
-                name: style.name,
-                poses: style.poses.map((pose: any) => ({
-                    id: pose.pose.id,
-                    english_name: pose.pose.english_name,
-                    sanskrit_name: pose.pose.sanskrit_name,
-                    level: pose.pose.level,
-                    description: pose.pose.description,
-                    category: pose.pose.category
-                }))
-            }));
-
-            res.json({styles});
+            styleResponse = styleData.map(mapStyle);
         }
+
+        res.json({style: styleResponse});
     } catch (error) {
         console.error(error);
         res.status(500).json({error: 'An error occurred while retrieving styles'});

@@ -1,68 +1,34 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import prisma from '../db';
 
-export const getCategories = async (req: Request, res: Response) => {
-    const { name } = req.query;
-    const nameStr = Array.isArray(name) ? name[0] : name;
+import {getStringValue} from "../../utils/string";
+import {mapCategory} from "../../utils/category";
 
-    let rawData;
+import {Category} from "../../types/Category";
+
+export const getCategories = async (req: Request, res: Response) => {
+    const {name} = req.query;
+    const nameStr = getStringValue(name);
 
     try {
-        if (name) {
-            rawData = await prisma.category.findFirst({
-                where: { name: nameStr },
-                include: {
-                    poses: {
-                        include: {
-                            category: true
-                        }
-                    }
-                }
+        let categoriesResponse: Category[];
+
+        if (nameStr) {
+            const categoryData: Category = await prisma.category.findFirst({
+                where: {name: nameStr},
+                include: {poses: {include: {styles: {include: {style: true}}}}},
             });
-
-            const category = {
-                id: rawData?.id,
-                name: rawData?.name,
-                description: rawData?.description,
-                poses: rawData?.poses?.length ? rawData?.poses.map((pose: any) => ({
-                    id: pose.id,
-                    english_name: pose.english_name,
-                    sanskrit_name: pose.sanskrit_name,
-                    level: pose.level,
-                    description: pose.description,
-                    category: pose.category
-                })) : []
-            };
-
-            res.json({category});
+            categoriesResponse = [mapCategory(categoryData)];
         } else {
-            rawData = await prisma.category.findMany({
-                include: {
-                    poses: {
-                        include: {
-                            category: true
-                        }
-                    }
-                }
+            const categoriesData = await prisma.category.findMany({
+                include: {poses: {include: {styles: {include: {style: true}}}}},
             });
-
-            const categories = rawData.map((category: any) => ({
-                id: category?.id,
-                name: category?.name,
-                description: category?.description.name,
-                poses: category?.poses?.length ? category?.poses.map((pose: any) => ({
-                    id: pose.id,
-                    english_name: pose.english_name,
-                    sanskrit_name: pose.sanskrit_name,
-                    level: pose.level,
-                    description: pose.description,
-                    category: pose.category
-                })) : []
-            }));
-            res.json({categories});
+            categoriesResponse = categoriesData.map(mapCategory);
         }
+
+        res.json({categories: categoriesResponse});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while retrieving categories' });
+        res.status(500).json({error: 'An error occurred while retrieving categories'});
     }
 }
