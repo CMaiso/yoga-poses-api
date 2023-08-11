@@ -16,7 +16,7 @@ export interface PoseFromDatabase {
     sanskrit_name: string;
     level: string;
     description: string;
-    category: Category;
+    category?: Category;
     styles: StyleOnPose[];
-    categoryId: string;
+    categoryId?: string;
 }

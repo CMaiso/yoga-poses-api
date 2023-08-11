@@ -1,7 +1,7 @@
-import {Category} from "../types/Category";
+import {Category, CategoryFromDatabase} from "../types/Category";
 import {Pose, PoseFromDatabase} from "../types/Pose";
 import {Style, StyleOnPose} from "../types/Style";
-export const mapCategory = (category: Category): Category => ({
+export const mapCategory = (category: CategoryFromDatabase): Category => ({
     id: category?.id,
     name: category?.name,
     description: category?.description,

@@ -4,7 +4,7 @@ import prisma from '../db';
 import {getStringValue} from "../../utils/string";
 import {mapCategory} from "../../utils/category";
 
-import {Category} from "../../types/Category";
+import {Category, CategoryFromDatabase} from "../../types/Category";
 
 export const getCategories = async (req: Request, res: Response) => {
     const {name} = req.query;
@@ -14,13 +14,18 @@ export const getCategories = async (req: Request, res: Response) => {
         let categoriesResponse: Category[];
 
         if (nameStr) {
-            const categoryData: Category = await prisma.category.findFirst({
+            const categoryData: CategoryFromDatabase | null = await prisma.category.findFirst({
                 where: {name: nameStr},
                 include: {poses: {include: {styles: {include: {style: true}}}}},
             });
-            categoriesResponse = [mapCategory(categoryData)];
+
+            if (categoryData) {
+                categoriesResponse = [mapCategory(categoryData)];
+            } else {
+                categoriesResponse = []
+            }
         } else {
-            const categoriesData = await prisma.category.findMany({
+            const categoriesData: CategoryFromDatabase[] = await prisma.category.findMany({
                 include: {poses: {include: {styles: {include: {style: true}}}}},
             });
             categoriesResponse = categoriesData.map(mapCategory);
