@@ -7,9 +7,10 @@ export const mapPose = (pose: PoseFromDatabase): Pose => ({
     sanskrit_name: pose.sanskrit_name,
     level: pose.level,
     description: pose.description,
-    category: pose.category.name,
+    category: pose?.category?.name,
     styles: pose.styles.map((stylePose: StyleOnPose): Style => ({
         id: stylePose.style.id,
         name: stylePose.style.name,
+        description: stylePose.style.description
     }))
 })

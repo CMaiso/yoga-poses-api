@@ -4,6 +4,7 @@ import {Pose} from "../types/Pose";
 export const mapStyle = (style: StyleFromDatabase): Style => ({
     id: style?.id,
     name: style?.name,
+    description: style?.description,
     poses: style?.poses?.length ? style?.poses?.map(mapPoseForStyle) : [],
 })
 

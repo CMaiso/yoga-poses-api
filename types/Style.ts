@@ -3,12 +3,14 @@ import {Pose} from "./Pose";
 export interface Style {
     id: string;
     name: string;
+    description: string;
     poses?: Pose[] | [];
 }
 
 export interface StyleFromDatabase {
     id: string;
     name: string;
+    description: string;
     poses?: PosesOnStyle[] | [];
 }
 

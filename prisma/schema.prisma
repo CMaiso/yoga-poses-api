@@ -29,9 +29,10 @@ model Category {
 }
 
 model Style {
-  id    String          @id @default(uuid())
-  name  String
-  poses StylesOnPoses[]
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  poses       StylesOnPoses[]
 }
 
 model StylesOnPoses {
