@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import prisma from '../db';
 
 import {getStringValue} from "../../utils/string";
-import {mapPose} from "../../utils/pose";
+import {mapPose, buildWhereConditions} from "../../utils/pose";
 
 import {PoseFromDatabase} from "../../types/Pose";
 
@@ -14,30 +14,9 @@ export const getPoses = async (req: Request, res: Response) => {
     const categoryStr = getStringValue(category);
     const styleStr = getStringValue(style);
 
-    const buildWhereConditions = (
-        nameStr?: string, levelStr?: string, categoryStr?: string, styleStr?: string
-    ) => {
-        let whereConditions = {};
-
-        if (nameStr) whereConditions = {...whereConditions, english_name: nameStr};
-        if (levelStr) whereConditions = {...whereConditions, level: levelStr};
-        if (categoryStr) whereConditions = {...whereConditions, category: {name: categoryStr}};
-        if (styleStr) {
-            whereConditions = {
-                ...whereConditions,
-                styles: {
-                    some: {
-                        style: {name: styleStr}
-                    }
-                }
-            };
-        }
-
-        return whereConditions;
-    };
-
     try {
         const whereConditions = buildWhereConditions(nameStr, levelStr, categoryStr, styleStr);
+        console.log(whereConditions);
 
         const posesResponse: PoseFromDatabase[] = await prisma.pose.findMany({
             where: whereConditions,

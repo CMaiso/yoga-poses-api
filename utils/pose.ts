@@ -14,3 +14,25 @@ export const mapPose = (pose: PoseFromDatabase): Pose => ({
         description: stylePose.style.description
     }))
 })
+
+export const buildWhereConditions = (
+    nameStr?: string, levelStr?: string, categoryStr?: string, styleStr?: string
+) => {
+    let whereConditions = {};
+
+    if (nameStr) whereConditions = {...whereConditions, english_name: nameStr};
+    if (levelStr) whereConditions = {...whereConditions, level: levelStr};
+    if (categoryStr) whereConditions = {...whereConditions, category: {name: categoryStr}};
+    if (styleStr) {
+        whereConditions = {
+            ...whereConditions,
+            styles: {
+                some: {
+                    style: {name: styleStr}
+                }
+            }
+        };
+    }
+
+    return whereConditions;
+};
