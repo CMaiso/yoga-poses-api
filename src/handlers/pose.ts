@@ -9,6 +9,10 @@ import {PoseFromDatabase} from "../../types/Pose";
 export const getPoses = async (req: Request, res: Response) => {
     const {name, level, category, style} = req.query;
 
+    if (!name && !level && !category && !style) {
+        return res.status(200).json({ poses: [] });
+    }
+
     const nameStr = getStringValue(name);
     const levelStr = getStringValue(level);
     const categoryStr = getStringValue(category);
@@ -16,7 +20,6 @@ export const getPoses = async (req: Request, res: Response) => {
 
     try {
         const whereConditions = buildWhereConditions(nameStr, levelStr, categoryStr, styleStr);
-        console.log(whereConditions);
 
         const posesResponse: PoseFromDatabase[] = await prisma.pose.findMany({
             where: whereConditions,

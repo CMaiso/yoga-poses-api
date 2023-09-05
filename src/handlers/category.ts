@@ -10,6 +10,10 @@ export const getCategories = async (req: Request, res: Response) => {
     const {name} = req.query;
     const nameStr = getStringValue(name);
 
+    if (!name) {
+        return res.status(200).json({ categories: [] });
+    }
+
     try {
         let categoriesResponse: Category[];
 
