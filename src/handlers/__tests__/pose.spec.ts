@@ -2,14 +2,27 @@ import {poseDataFromDatabaseFixture, poseFixture} from "../../../utils/fixtures/
 import {mapPose, buildWhereConditions} from "../../../utils/pose";
 import {getStringValue} from "../../../utils/string";
 
+jest.mock('@prisma/client', () => ({
+    pose: {
+        findMany: jest.fn(),
+    },
+}));
+
+import prisma from '../../db';
+
 
 describe('PoseHandler', () => {
-    it('should map from PosesFromDatabase to Poses',() => {
+    it('should map from PosesFromDatabase to Poses', () => {
         expect(mapPose(poseDataFromDatabaseFixture)).toEqual(poseFixture);
     });
 
-    it('should build correct where conditions', () => {
-        const {name, level, category, style} = {name: 'Moutain Pose', level: 'Beginner', category: 'Standing', style:'Hatha'};
+    describe('should build correct where conditions', () => {
+        const {name, level, category, style} = {
+            name: 'Moutain Pose',
+            level: 'Beginner',
+            category: 'Standing',
+            style: 'Hatha'
+        };
 
         it('with only one parameter', () => {
             const nameStr = getStringValue('');
@@ -17,8 +30,8 @@ describe('PoseHandler', () => {
             const categoryStr = getStringValue('');
             const styleStr = getStringValue(style);
 
-            expect(buildWhereConditions(nameStr, levelStr, categoryStr, styleStr )).toEqual({
-                styles: { some: { style: { name: styleStr } } }
+            expect(buildWhereConditions(nameStr, levelStr, categoryStr, styleStr)).toEqual({
+                styles: {some: {style: {name: styleStr}}}
             });
         });
 
@@ -28,12 +41,37 @@ describe('PoseHandler', () => {
             const categoryStr = getStringValue(category);
             const styleStr = getStringValue(style);
 
-            expect(buildWhereConditions(nameStr, levelStr, categoryStr, styleStr )).toEqual({
+            expect(buildWhereConditions(nameStr, levelStr, categoryStr, styleStr)).toEqual({
                 english_name: nameStr,
                 level: levelStr,
-                category: { name: categoryStr },
-                styles: { some: { style: { name: styleStr } } }
+                category: {name: categoryStr},
+                styles: {some: {style: {name: styleStr}}}
             });
+        });
+
+        it('with a wrong parameter', () => {
+            const nameStr = getStringValue('');
+            const levelStr = getStringValue('');
+            const categoryStr = getStringValue('');
+            const styleStr = getStringValue('');
+
+            expect(buildWhereConditions(nameStr, levelStr, categoryStr, styleStr)).toEqual({});
+        });
+    });
+
+    describe('getPoses endpoint', () => {
+        it('should return poses successfully', async () => {
+            const mockPoses = [
+
+            ];
+
+            (prisma.pose.findMany as jest.Mock).mockResolvedValue(mockPoses);
+
+            const response = await request(app).get('/your-endpoint-path?name=someName');
+
+            expect(response.status).toBe(200);
+            expect(response.body.poses).toEqual(mockPoses);
+            // ... any other assertions you want to make
         });
     });
 })

@@ -9,7 +9,7 @@ import {PoseFromDatabase} from "../../types/Pose";
 export const getPoses = async (req: Request, res: Response) => {
     const {name, level, category, style} = req.query;
 
-    if (!name && !level && !category && !style) {
+    if (req.query && !name && !level && !category && !style) {
         return res.status(200).json({ poses: [] });
     }
 
